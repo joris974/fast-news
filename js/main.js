@@ -1,23 +1,39 @@
 const newsAPIKey = "3621f07715db4ebd953601ca8d943af2"
-// https://newsapi.org/v1/sources?language=en&country=us
-
 const endpoint =  "https://newsapi.org/v1/articles?source=techcrunch&apiKey=" + newsAPIKey
+
+
+
+
 
 $(function() {
 
+  const sendRequest = function() {
+    fetch(endpoint)
+    .then(function(response) {
+      if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status Code: ' + response.status)
+        return
+      }
+      // Examine the text in the response
+      response.json()
+      .then(function(data) {
+        const $articles = data.articles.map(createArticle)
+        $("#root").append(null, $articles)
+      })
+    })
+  }
+
+  sendRequest()
+
   $(".refresh-click").click(function() {
     $(".refresh-click").addClass("fa-spin")
-
-    $.get(endpoint, function(data) {
-      const $articles = data.articles.map(createArticle)
-      $("#root").append(null, $articles)
-    })
-    .fail(function() {
-      alert("Could not update at this time. Please try again.");
-    })
-    .always(function() {
-      $(".refresh-click").removeClass("fa-spin")
-    });
+    sendRequest()
+      .then(function() {
+        $(".refresh-click").removeClass("fa-spin")
+      })
+      .catch(function(err) {
+        alert("Could not update at this time. Please try again.")
+      })
   })
 
   const createArticle = function(article) {
