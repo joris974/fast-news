@@ -44,7 +44,9 @@ $(function() {
 
     const articleContent = $('<div class="article-content">')
     const articleTitle = `<h2><a href='${article.url}'>${article.title}</a></h2>`
-    articleContent.append(articleTitle)
+    const articleText = `<p class="article-text">${article.description}</p>`
+
+    articleContent.append(articleTitle, [articleText])
 
     articleWrapper.append(articleMedia, [articleContent])
     return articleWrapper
