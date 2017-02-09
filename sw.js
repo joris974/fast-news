@@ -1,5 +1,7 @@
-const CACHE_NAME = 'fast-news-v1'
-const staticWebsiteCache =
+
+const CACHE = 'cache-v1'
+
+const PRECACHE_URLS =
   [ '/'
   , '/index.html'
 
@@ -18,51 +20,73 @@ const staticWebsiteCache =
   , '/fonts/fontawesome-webfont.ttf?v=4.7.0'
   , '/fonts/fontawesome-webfont.woff?v=4.7.0'
   , '/fonts/fontawesome-webfont.woff2?v=4.7.0'
+
+  , '/images/default-image.jpg'
   ]
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-    .then(function(cache) {
-      return cache.addAll(staticWebsiteCache)
+    precache()
+    .then(function() {
+      return self.skipWaiting()
     })
   )
-})
-
-self.addEventListener('activate', function(event) {
-  console.log('Activated', event)
-})
-
-self.addEventListener('push', function(event) {
-  console.log('Push message received', event)
 })
 
 self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-    .then(function(response) {
-      // Cache hit - return response
-      if (response) {
-        return response
-      }
+  // Only worry about GET requests and certain domains
+  if (event.request.method !== "GET") {
+    return
+  }
 
-      const fetchRequest = event.request.clone()
+  event.respondWith(fromCache(event.request))
+  event.waitUntil(update(event.request))
+})
 
-      return fetch(fetchRequest).then(function(response) {
-        // Check if we received a valid response
-        if(!response) {
-          return response
-        }
-
-        const responseToCache = response.clone()
-
-        caches.open(CACHE_NAME)
-        .then(function(cache) {
-          cache.put(event.request, responseToCache)
-        })
-
-        return response
+self.addEventListener('activate', function(event) {
+  const currentCaches = [CACHE]
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return cacheNames.filter(function(cacheName) {
+        return !currentCaches.includes(cacheName)
       })
+    }).then(function(cachesToDelete) {
+      return Promise.all(cachesToDelete.map(function(cacheToDelete) {
+        return caches.delete(cacheToDelete)
+      }))
+    }).then(function() {
+      return self.clients.claim()
     })
   )
 })
+
+function precache() {
+  return caches.open(CACHE)
+    .then(function(cache) {
+      return cache.addAll(PRECACHE_URLS)
+    })
+}
+
+function fromCache(request) {
+  return caches.open(CACHE).then(function (cache) {
+    return cache.match(request).then(function (matching) {
+      return matching || Promise.reject('no-match')
+    })
+  })
+}
+
+function fromNetwork(request) {
+  return new Promise(function (fulfill, reject) {
+    fetch(request).then(function (response) {
+      fulfill(response)
+    }, reject)
+  })
+}
+
+function update(request) {
+  return caches.open(CACHE).then(function (cache) {
+    return fetch(request.clone()).then(function (response) {
+      return cache.put(request, response)
+    })
+  })
+}

@@ -1,29 +1,33 @@
 const newsAPIKey = "3621f07715db4ebd953601ca8d943af2"
-const endpoint =  "https://newsapi.org/v1/articles?source=techcrunch&apiKey=" + newsAPIKey
+const baseEndpoint =  "https://newsapi.org/v1/articles"
 
-
-
-
+var currentSource = "google-news"
 
 $(function() {
 
-  const sendRequest = function() {
-    fetch(endpoint)
+  const sendRequest = function(source) {
+    const endpoint = `${baseEndpoint}?source=${source}&apiKey=${newsAPIKey}`
+
+    return fetch(endpoint)
     .then(function(response) {
       if (response.status !== 200) {
         console.log('Looks like there was a problem. Status Code: ' + response.status)
         return
       }
-      // Examine the text in the response
-      response.json()
-      .then(function(data) {
-        const $articles = data.articles.map(createArticle)
-        $("#root").append(null, $articles)
-      })
+      return response.json()
+    })
+    .then(function(data) {
+      $("#root").empty()
+      const $articles = data.articles.map(createArticle)
+      $("#root").append(null, $articles)
     })
   }
 
-  sendRequest()
+  sendRequest(currentSource)
+
+  $(".js-source-selection").change(function(e) {
+    sendRequest(e.target.value)
+  })
 
   $(".refresh-click").click(function() {
     $(".refresh-click").addClass("fa-spin")
@@ -39,13 +43,19 @@ $(function() {
   const createArticle = function(article) {
     const articleWrapper = $('<div class="article clearfix">')
     const articleMedia = $('<div class="article-media">')
-    const articleImg = $(`<img width='100' height='100' src='${article.urlToImage} title='${article.title}' alt='${article.title}'/>`)
+    const articleImg =
+      $(`<img width='100'
+              height='100'
+              onerror="if (this.src != 'images/default-image.jpg') this.src = 'images/default-image.jpg';"
+              src='${article.urlToImage}'
+              title='${article.title}'
+              alt='${article.title}'
+        />`)
     articleMedia.append(articleImg)
 
     const articleContent = $('<div class="article-content">')
     const articleTitle = `<h2><a href='${article.url}'>${article.title}</a></h2>`
     const articleText = `<p class="article-text">${article.description}</p>`
-
     articleContent.append(articleTitle, [articleText])
 
     articleWrapper.append(articleMedia, [articleContent])
