@@ -46,7 +46,7 @@ $(function() {
     const articleImg =
       $(`<img width='100'
               height='100'
-              onerror="if (this.src != 'images/default-image.jpg') this.src = 'images/default-image.jpg';"
+              onerror="if (this.src != 'images/default-image.png') this.src = 'images/default-image.png';"
               src='${article.urlToImage}'
               title='${article.title}'
               alt='${article.title}'

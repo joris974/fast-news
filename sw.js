@@ -21,7 +21,7 @@ const PRECACHE_URLS =
   , '/fonts/fontawesome-webfont.woff?v=4.7.0'
   , '/fonts/fontawesome-webfont.woff2?v=4.7.0'
 
-  , '/images/default-image.jpg'
+  , '/images/default-image.png'
   ]
 
 self.addEventListener('install', function(event) {
