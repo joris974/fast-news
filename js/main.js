@@ -29,17 +29,6 @@ $(function() {
     sendRequest(e.target.value)
   })
 
-  $(".refresh-click").click(function() {
-    $(".refresh-click").addClass("fa-spin")
-    sendRequest()
-      .then(function() {
-        $(".refresh-click").removeClass("fa-spin")
-      })
-      .catch(function(err) {
-        alert("Could not update at this time. Please try again.")
-      })
-  })
-
   const createArticle = function(article) {
     const articleWrapper = $('<div class="article clearfix">')
     const articleMedia = $('<div class="article-media">')
