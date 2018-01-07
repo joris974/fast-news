@@ -3,7 +3,7 @@ const CACHE = 'cache-v1'
 
 const PRECACHE_URLS =
   [ '/'
-  , '/index.html'
+  , 'index.html'
 
   , '/css/main.css'
   , '/css/normalize.min.css'
@@ -12,7 +12,7 @@ const PRECACHE_URLS =
   , '/js/vendor/jquery-1.11.2.min.js'
   , '/js/main.js'
 
-  , '/manifest.json'
+  , 'manifest.json'
 
   , '/fonts/FontAwesome.otf?v=4.7.0'
   , '/fonts/fontawesome-webfont.eot?v=4.7.0'
