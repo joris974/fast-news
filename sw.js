@@ -2,19 +2,8 @@
 const CACHE = 'cache-v1'
 
 const PRECACHE_URLS =
-  [ '/'
-  , 'index.html'
+  [ 
 
-  , '/css/main.css'
-  , '/css/normalize.min.css'
-  , '/css/font-awesome.min.css'
-
-  , '/js/vendor/jquery-1.11.2.min.js'
-  , '/js/main.js'
-
-  , 'manifest.json'
-
-  , '/images/default-image.png'
   ]
 
 self.addEventListener('install', function(event) {

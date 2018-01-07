@@ -1,6 +1,8 @@
 {
   "short_name": "Fast News",
   "name": "Fast News",
+  "background_color": "#3372DF",
+  "theme_color": "#3372DF",
   "icons": [
     {
       "src": "images/launcher-icon-2x.png",
